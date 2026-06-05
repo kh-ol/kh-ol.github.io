@@ -52,11 +52,17 @@ const els = {
   playerUnit: document.querySelector("#player-unit"),
   setupDialog: document.querySelector("#setup-dialog"),
   tokenInput: document.querySelector("#token-input"),
-  saveToken: document.querySelector("#save-token-button")
+  saveToken: document.querySelector("#save-token-button"),
+  introFrame: document.querySelector("#intro-frame"),
+  introSrcdoc: document.querySelector("#intro-srcdoc"),
+  scoreboardView: document.querySelector("#scoreboard-view"),
+  registerView: document.querySelector("#register-view"),
+  showRegister: document.querySelector("#show-register"),
+  showScoreboard: document.querySelector("#show-scoreboard")
 };
 
 const storageTokenKey = "kh-sommer-ol-airtable-token";
-const introDurationMs = 4300;
+const introDurationMs = 5000;
 const introFadeMs = 420;
 
 document.addEventListener("DOMContentLoaded", init);
@@ -79,6 +85,8 @@ function init() {
 function bindEvents() {
   if (els.form) els.form.addEventListener("submit", submitAction);
   if (els.saveToken) els.saveToken.addEventListener("click", saveLocalToken);
+  if (els.showRegister) els.showRegister.addEventListener("click", () => showView("register"));
+  if (els.showScoreboard) els.showScoreboard.addEventListener("click", () => showView("scoreboard"));
   if (els.scoreFilter) {
     els.scoreFilter.addEventListener("change", () => {
       state.scoreFilter = els.scoreFilter.value;
@@ -90,6 +98,8 @@ function bindEvents() {
 function playIntroOverlay() {
   const overlay = document.querySelector("#intro-overlay");
   if (!overlay) return Promise.resolve();
+
+  loadEmbeddedIntro();
 
   const skip = document.querySelector("#intro-skip");
   let done = false;
@@ -115,6 +125,32 @@ function playIntroOverlay() {
       });
     }
   });
+}
+
+function loadEmbeddedIntro() {
+  if (!els.introFrame || !els.introSrcdoc || els.introFrame.srcdoc) return;
+
+  try {
+    const encoded = els.introSrcdoc.textContent.trim();
+    const binary = atob(encoded);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    els.introFrame.srcdoc = new TextDecoder("utf-8").decode(bytes);
+  } catch (error) {
+    els.introFrame.srcdoc = "<!doctype html><html><body style=\"margin:0;background:#15a7ae\"></body></html>";
+    console.error("Intro kunne ikke indlæses:", error);
+  }
+}
+
+function showView(view) {
+  const isRegister = view === "register";
+
+  if (els.scoreboardView) els.scoreboardView.hidden = isRegister;
+  if (els.registerView) els.registerView.hidden = !isRegister;
+  if (els.showRegister) els.showRegister.hidden = isRegister;
+  if (els.showScoreboard) els.showScoreboard.hidden = !isRegister;
+
+  document.title = isRegister ? "Registrer aktivitet" : "Sommerduel";
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 async function loadData() {
@@ -173,7 +209,8 @@ async function submitAction(event) {
 
     els.quantity.value = "";
     setMessage("Point er registreret.", "ok");
-    window.location.href = "/";
+    await loadData();
+    showView("scoreboard");
   } catch (error) {
     setMessage(error.message, "error");
   } finally {
