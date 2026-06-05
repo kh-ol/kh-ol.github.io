@@ -10,23 +10,20 @@
   <body>
     <header class="topbar">
       <div class="top-actions">
-        <a class="primary-link" href="register.html">Registrer aktivitet</a>
+        <a class="primary-link" href="/register.html">Registrer aktivitet</a>
       </div>
     </header>
 
     <main>
       <section class="scoreboard" aria-label="Konkurrencestilling">
         <div class="score-controls">
-          <label class="compact-field">
-            <span>Vis</span>
-            <select id="score-filter">
-              <option value="all">Samlet konkurrence</option>
-              <option value="Løb">Løb</option>
-              <option value="Armbøjninger">Armbøjninger</option>
-              <option value="Mavebøjninger">Mavebøjninger</option>
-              <option value="Squats">Squats</option>
-            </select>
-          </label>
+          <select id="score-filter" aria-label="Vælg konkurrencevisning">
+            <option value="all">Samlet konkurrence</option>
+            <option value="Løb">Løb</option>
+            <option value="Armbøjninger">Armbøjninger</option>
+            <option value="Mavebøjninger">Mavebøjninger</option>
+            <option value="Squats">Squats</option>
+          </select>
         </div>
 
         <div class="paths" aria-label="Holdenes placering på ruten">

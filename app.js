@@ -139,7 +139,7 @@ async function submitAction(event) {
 
     els.quantity.value = "";
     setMessage("Point er registreret.", "ok");
-    window.location.href = "index.html";
+    window.location.href = "/";
   } catch (error) {
     setMessage(error.message, "error");
   } finally {
