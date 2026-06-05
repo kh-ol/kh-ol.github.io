@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sommerduel</title>
+    <link rel="preconnect" href="https://api.airtable.com">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <canvas id="motion-field" aria-hidden="true"></canvas>
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">KH Sommer OL</p>
+        <h1>Trænere mod spillere</h1>
+      </div>
+      <button class="icon-button" id="refresh-button" type="button" aria-label="Opdater resultater" title="Opdater resultater">
+        <span aria-hidden="true">↻</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="arena" aria-labelledby="score-title">
+        <div class="score-header">
+          <div>
+            <p class="eyebrow">Live stilling</p>
+            <h2 id="score-title">Sommerens pointjagt</h2>
+          </div>
+          <div class="status-pill" id="sync-status" role="status">Klar</div>
+        </div>
+
+        <div class="teams" aria-label="Samlet stilling">
+          <article class="team-panel trainer">
+            <div class="team-topline">
+              <span>Trænere</span>
+              <strong id="trainer-score">0</strong>
+            </div>
+            <div class="track">
+              <div class="progress" id="trainer-progress"></div>
+              <div class="runner" id="trainer-runner" aria-hidden="true">●</div>
+            </div>
+          </article>
+
+          <article class="team-panel player">
+            <div class="team-topline">
+              <span>Spillere</span>
+              <strong id="player-score">0</strong>
+            </div>
+            <div class="track">
+              <div class="progress" id="player-progress"></div>
+              <div class="runner" id="player-runner" aria-hidden="true">●</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="court" aria-hidden="true">
+          <div class="goal left-goal"></div>
+          <div class="center-line"></div>
+          <div class="goal right-goal"></div>
+          <div class="handball" id="handball"></div>
+        </div>
+      </section>
+
+      <section class="workbench" aria-label="Registrering og resultater">
+        <form class="entry-panel" id="entry-form">
+          <div class="section-title">
+            <p class="eyebrow">Registrer indsats</p>
+            <h2>Tilføj dagens bidrag</h2>
+          </div>
+
+          <label>
+            <span>Deltager</span>
+            <select id="member-input" required>
+              <option value="">Henter deltagere...</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Aktivitet</span>
+            <select id="activity-input" required>
+              <option value="Løb">Løb</option>
+              <option value="Armbøjninger">Armbøjninger</option>
+              <option value="Mavebøjninger">Mavebøjninger</option>
+              <option value="Squats">Squats</option>
+            </select>
+          </label>
+
+          <div class="field-grid">
+            <label>
+              <span>Dato</span>
+              <input id="date-input" type="date" required>
+            </label>
+            <label>
+              <span>Antal</span>
+              <input id="quantity-input" type="number" min="1" step="1" inputmode="numeric" required>
+            </label>
+          </div>
+
+          <button class="primary-button" id="submit-button" type="submit">Send point ind</button>
+          <p class="form-message" id="form-message"></p>
+        </form>
+
+        <aside class="leaderboard" aria-labelledby="leaderboard-title">
+          <div class="section-title">
+            <p class="eyebrow">Topliste</p>
+            <h2 id="leaderboard-title">Sommerhelte</h2>
+          </div>
+          <div class="tabs" role="tablist" aria-label="Toplistevisning">
+            <button class="tab active" type="button" data-tab="members">Deltagere</button>
+            <button class="tab" type="button" data-tab="activities">Aktiviteter</button>
+          </div>
+          <ol class="rank-list" id="rank-list"></ol>
+        </aside>
+      </section>
+
+      <section class="activity-strip" aria-label="Aktivitetsfordeling">
+        <div class="metric-card">
+          <span>Løb</span>
+          <strong id="metric-run">0</strong>
+        </div>
+        <div class="metric-card">
+          <span>Armbøjninger</span>
+          <strong id="metric-pushups">0</strong>
+        </div>
+        <div class="metric-card">
+          <span>Mavebøjninger</span>
+          <strong id="metric-situps">0</strong>
+        </div>
+        <div class="metric-card">
+          <span>Squats</span>
+          <strong id="metric-squats">0</strong>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="setup-dialog">
+      <form method="dialog" class="setup-panel">
+        <h2>Airtable token mangler</h2>
+        <p>Indsæt et Personal Access Token i <code>app.js</code>, eller gem et token lokalt i denne browser.</p>
+        <label>
+          <span>Token</span>
+          <input id="token-input" type="password" autocomplete="off" placeholder="pat...">
+        </label>
+        <div class="dialog-actions">
+          <button class="secondary-button" value="cancel" type="submit">Luk</button>
+          <button class="primary-button" id="save-token-button" value="default" type="button">Gem lokalt</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
