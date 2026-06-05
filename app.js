@@ -24,6 +24,8 @@ const ACTIVITIES = {
   "Squats": { leagueMultiplier: 1, goal: 5000, unit: "stk." }
 };
 
+const LEAGUE_TOTAL = { goal: 20000, unit: "stk." };
+
 const state = {
   participants: [],
   actions: [],
@@ -46,7 +48,8 @@ const els = {
   trainerRunner: document.querySelector("#trainer-runner"),
   playerRunner: document.querySelector("#player-runner"),
   scoreFilter: document.querySelector("#score-filter"),
-  goalText: document.querySelector("#goal-text"),
+  trainerGoal: document.querySelector("#trainer-goal"),
+  playerGoal: document.querySelector("#player-goal"),
   trainerUnit: document.querySelector("#trainer-unit"),
   playerUnit: document.querySelector("#player-unit"),
   setupDialog: document.querySelector("#setup-dialog"),
@@ -274,17 +277,15 @@ function calculateTotals() {
 function renderScores(totals) {
   const trainer = totals.teams["Træner"];
   const player = totals.teams["Spiller"];
-  const activity = ACTIVITIES[state.scoreFilter];
-  const goal = activity?.goal || null;
-  const unit = activity?.unit || "point";
-  const max = goal || Math.max(trainer, player, 1);
+  const scoreMeta = getScoreMeta();
+  const max = scoreMeta.goal || Math.max(trainer, player, 1);
   const trainerPct = scoreToPathPercent(trainer, max);
   const playerPct = scoreToPathPercent(player, max);
   const leader = trainer === player ? "draw" : trainer > player ? "trainer" : "player";
 
   animateNumber(els.trainerScore, trainer);
   animateNumber(els.playerScore, player);
-  setScoreMeta(unit, goal);
+  setScoreMeta(scoreMeta);
   setPathProgress(els.trainerProgress, els.trainerRunner, trainerPct, trainer ? trainerPct : 0);
   setPathProgress(els.playerProgress, els.playerRunner, playerPct, player ? playerPct : 0);
 
@@ -299,13 +300,18 @@ function scoreToPathPercent(score, max) {
   return Math.min(84, Math.max(8, Math.round((score / max) * 84)));
 }
 
-function setScoreMeta(unit, goal) {
-  const goalLabel = goal ? `${formatNumber(goal)} ${unit}` : "Mål";
-  const goalText = goal ? `Mål: ${goalLabel}` : "Mål: samlet stilling";
+function getScoreMeta() {
+  if (state.scoreFilter === "all") return LEAGUE_TOTAL;
+  return ACTIVITIES[state.scoreFilter] || LEAGUE_TOTAL;
+}
+
+function setScoreMeta({ unit, goal }) {
+  const goalLabel = `${formatNumber(goal)} ${unit}`;
 
   els.trainerUnit.textContent = unit;
   els.playerUnit.textContent = unit;
-  els.goalText.textContent = goalText;
+  els.trainerGoal.textContent = goalLabel;
+  els.playerGoal.textContent = goalLabel;
 }
 
 function setPathProgress(progressEl, markerEl, markerPercent, fillPercent) {
