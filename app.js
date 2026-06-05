@@ -45,8 +45,6 @@ const els = {
   playerScore: document.querySelector("#player-score"),
   trainerProgress: document.querySelector("#trainer-progress"),
   playerProgress: document.querySelector("#player-progress"),
-  trainerMarker: document.querySelector("#trainer-marker"),
-  playerMarker: document.querySelector("#player-marker"),
   scoreFilter: document.querySelector("#score-filter"),
   trainerGoal: document.querySelector("#trainer-goal"),
   playerGoal: document.querySelector("#player-goal"),
@@ -357,8 +355,8 @@ function renderScores(totals) {
   animateNumber(els.trainerScore, trainer);
   animateNumber(els.playerScore, player);
   setScoreMeta(scoreMeta);
-  setPathProgress(els.trainerProgress, els.trainerMarker, trainerProgress);
-  setPathProgress(els.playerProgress, els.playerMarker, playerProgress);
+  setPathProgress(els.trainerProgress, trainerProgress);
+  setPathProgress(els.playerProgress, playerProgress);
 
   if (state.lastLeader && state.lastLeader !== leader) {
     burstConfetti();
@@ -385,23 +383,10 @@ function setScoreMeta({ unit, goal }) {
   els.playerGoal.textContent = goalLabel;
 }
 
-function setPathProgress(progressEl, markerEl, progress) {
+function setPathProgress(progressEl, progress) {
+  if (!progressEl) return;
   const decimal = Math.min(1, Math.max(0, progress));
   progressEl.style.setProperty("--path-progress", decimal.toFixed(4));
-
-  if (typeof progressEl.getTotalLength !== "function") return;
-
-  progressEl.removeAttribute("pathLength");
-  const pathLength = progressEl.getTotalLength();
-  const coveredLength = pathLength * decimal;
-  progressEl.style.strokeDasharray = `${coveredLength} ${pathLength}`;
-  progressEl.style.strokeDashoffset = "0";
-
-  if (!markerEl) return;
-
-  const point = progressEl.getPointAtLength(coveredLength);
-  markerEl.style.setProperty("--path-marker-x", point.x.toFixed(2));
-  markerEl.style.setProperty("--path-marker-y", point.y.toFixed(2));
 }
 
 function renderEmptyState() {
