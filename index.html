@@ -8,72 +8,73 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <canvas id="motion-field" aria-hidden="true"></canvas>
-
     <header class="topbar">
-      <div>
+      <div class="brand">
         <p class="eyebrow">KH Sommer OL</p>
         <h1>Trænere mod spillere</h1>
       </div>
-      <button class="icon-button" id="refresh-button" type="button" aria-label="Opdater resultater" title="Opdater resultater">
-        <span aria-hidden="true">↻</span>
-      </button>
+      <div class="top-actions">
+        <a class="primary-link" href="#registrering">Registrer aktivitet</a>
+        <button class="icon-button" id="refresh-button" type="button" aria-label="Opdater resultater" title="Opdater resultater">
+          <span aria-hidden="true">↻</span>
+        </button>
+      </div>
     </header>
 
     <main>
-      <section class="arena" aria-labelledby="score-title">
-        <div class="score-header">
+      <section class="scoreboard" aria-labelledby="score-title">
+        <div class="score-head">
           <div>
             <p class="eyebrow">Live stilling</p>
-            <h2 id="score-title">Sommerens pointjagt</h2>
+            <h2 id="score-title">Hvor langt er holdene?</h2>
           </div>
           <div class="status-pill" id="sync-status" role="status">Klar</div>
         </div>
 
-        <div class="teams" aria-label="Samlet stilling">
-          <article class="team-panel trainer">
-            <div class="team-topline">
-              <span>Trænere</span>
-              <strong id="trainer-score">0</strong>
-            </div>
-            <div class="track">
-              <div class="progress" id="trainer-progress"></div>
-              <div class="runner" id="trainer-runner" aria-hidden="true">●</div>
+        <div class="paths" aria-label="Holdenes placering på ruten">
+          <article class="team-path trainer">
+            <h3>Trænere</h3>
+            <div class="path" aria-label="Trænernes rute">
+              <div class="path-line"></div>
+              <div class="path-fill" id="trainer-progress"></div>
+              <div class="path-marker" id="trainer-runner">
+                <span class="marker-dot" aria-hidden="true"></span>
+                <span class="marker-label"><strong id="trainer-score">0</strong> point</span>
+              </div>
             </div>
           </article>
 
-          <article class="team-panel player">
-            <div class="team-topline">
-              <span>Spillere</span>
-              <strong id="player-score">0</strong>
-            </div>
-            <div class="track">
-              <div class="progress" id="player-progress"></div>
-              <div class="runner" id="player-runner" aria-hidden="true">●</div>
+          <article class="team-path player">
+            <h3>Spillere</h3>
+            <div class="path" aria-label="Spillernes rute">
+              <div class="path-line"></div>
+              <div class="path-fill" id="player-progress"></div>
+              <div class="path-marker" id="player-runner">
+                <span class="marker-dot" aria-hidden="true"></span>
+                <span class="marker-label"><strong id="player-score">0</strong> point</span>
+              </div>
             </div>
           </article>
-        </div>
-
-        <div class="court" aria-hidden="true">
-          <div class="goal left-goal"></div>
-          <div class="center-line"></div>
-          <div class="goal right-goal"></div>
-          <div class="handball" id="handball"></div>
         </div>
       </section>
 
-      <section class="workbench" aria-label="Registrering og resultater">
+      <section class="form-section" id="registrering" aria-labelledby="form-title">
         <form class="entry-panel" id="entry-form">
           <div class="section-title">
-            <p class="eyebrow">Registrer indsats</p>
-            <h2>Tilføj dagens bidrag</h2>
+            <p class="eyebrow">Registrering</p>
+            <h2 id="form-title">Tilføj din aktivitet</h2>
           </div>
 
           <label>
-            <span>Deltager</span>
+            <span>Hvem er du?</span>
             <select id="member-input" required>
               <option value="">Henter deltagere...</option>
             </select>
+          </label>
+
+          <label>
+            <span>Dato</span>
+            <input id="date-input" type="date" required>
           </label>
 
           <label>
@@ -86,51 +87,14 @@
             </select>
           </label>
 
-          <div class="field-grid">
-            <label>
-              <span>Dato</span>
-              <input id="date-input" type="date" required>
-            </label>
-            <label>
-              <span>Antal</span>
-              <input id="quantity-input" type="number" min="1" step="1" inputmode="numeric" required>
-            </label>
-          </div>
+          <label>
+            <span>Antal gange</span>
+            <input id="quantity-input" type="number" min="1" step="1" inputmode="numeric" required>
+          </label>
 
-          <button class="primary-button" id="submit-button" type="submit">Send point ind</button>
+          <button class="primary-button" id="submit-button" type="submit">Send ind</button>
           <p class="form-message" id="form-message"></p>
         </form>
-
-        <aside class="leaderboard" aria-labelledby="leaderboard-title">
-          <div class="section-title">
-            <p class="eyebrow">Topliste</p>
-            <h2 id="leaderboard-title">Sommerhelte</h2>
-          </div>
-          <div class="tabs" role="tablist" aria-label="Toplistevisning">
-            <button class="tab active" type="button" data-tab="members">Deltagere</button>
-            <button class="tab" type="button" data-tab="activities">Aktiviteter</button>
-          </div>
-          <ol class="rank-list" id="rank-list"></ol>
-        </aside>
-      </section>
-
-      <section class="activity-strip" aria-label="Aktivitetsfordeling">
-        <div class="metric-card">
-          <span>Løb</span>
-          <strong id="metric-run">0</strong>
-        </div>
-        <div class="metric-card">
-          <span>Armbøjninger</span>
-          <strong id="metric-pushups">0</strong>
-        </div>
-        <div class="metric-card">
-          <span>Mavebøjninger</span>
-          <strong id="metric-situps">0</strong>
-        </div>
-        <div class="metric-card">
-          <span>Squats</span>
-          <strong id="metric-squats">0</strong>
-        </div>
       </section>
     </main>
 
