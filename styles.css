@@ -87,7 +87,7 @@ h3 {
 
 .top-actions {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 3rem;
+  grid-template-columns: 1fr;
   gap: 0.6rem;
   align-items: stretch;
 }
@@ -99,8 +99,7 @@ h3 {
 .primary-link,
 .secondary-link,
 .primary-button,
-.secondary-button,
-.icon-button {
+.secondary-button {
   border: 0;
   border-radius: 8px;
   font-weight: 900;
@@ -131,20 +130,6 @@ h3 {
   background: #fff;
 }
 
-.icon-button {
-  display: grid;
-  width: 3rem;
-  min-height: 3rem;
-  place-items: center;
-  border: 1px solid var(--line);
-  color: var(--ink);
-  background: #fff;
-}
-
-.icon-button.loading span {
-  animation: spin 900ms linear infinite;
-}
-
 main {
   display: grid;
   gap: 0.9rem;
@@ -172,7 +157,7 @@ main {
 }
 
 .score-controls {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: end;
 }
 
@@ -185,34 +170,6 @@ main {
   color: var(--muted);
   font-size: 0.92rem;
   font-weight: 850;
-}
-
-.status-pill {
-  display: inline-flex;
-  width: max-content;
-  min-height: 2.15rem;
-  align-items: center;
-  justify-content: center;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 850;
-  white-space: nowrap;
-  background: #fff;
-}
-
-.status-pill.error {
-  border-color: rgba(231, 63, 99, 0.4);
-  color: var(--trainer-dark);
-  background: #fff1f4;
-}
-
-.status-pill.ok {
-  border-color: rgba(0, 140, 138, 0.3);
-  color: var(--player-dark);
-  background: #effdfb;
 }
 
 .paths {
@@ -248,25 +205,6 @@ main {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.94)),
     repeating-linear-gradient(180deg, transparent 0 4.6rem, rgba(23, 32, 42, 0.07) 4.6rem 4.68rem);
-}
-
-.goal-badge {
-  position: absolute;
-  left: 50%;
-  bottom: 0.55rem;
-  z-index: 2;
-  min-width: 2rem;
-  min-height: 2rem;
-  display: grid;
-  place-items: center;
-  padding: 0 0.45rem;
-  border-radius: 999px;
-  color: #fff;
-  transform: translateX(-50%);
-  font-size: 0.72rem;
-  font-weight: 950;
-  white-space: nowrap;
-  background: var(--ink);
 }
 
 .path-line,

@@ -18,10 +18,10 @@ const AIRTABLE = {
 };
 
 const ACTIVITIES = {
-  "Løb": { multiplier: 1, goal: 200, unit: "km" },
-  "Armbøjninger": { multiplier: 1, goal: 5000, unit: "stk." },
-  "Mavebøjninger": { multiplier: 1, goal: 5000, unit: "stk." },
-  "Squats": { multiplier: 1, goal: 5000, unit: "stk." }
+  "Løb": { leagueMultiplier: 25, goal: 200, unit: "km" },
+  "Armbøjninger": { leagueMultiplier: 1, goal: 5000, unit: "stk." },
+  "Mavebøjninger": { leagueMultiplier: 1, goal: 5000, unit: "stk." },
+  "Squats": { leagueMultiplier: 1, goal: 5000, unit: "stk." }
 };
 
 const state = {
@@ -39,8 +39,6 @@ const els = {
   quantity: document.querySelector("#quantity-input"),
   submit: document.querySelector("#submit-button"),
   message: document.querySelector("#form-message"),
-  sync: document.querySelector("#sync-status"),
-  refresh: document.querySelector("#refresh-button"),
   trainerScore: document.querySelector("#trainer-score"),
   playerScore: document.querySelector("#player-score"),
   trainerProgress: document.querySelector("#trainer-progress"),
@@ -49,8 +47,6 @@ const els = {
   playerRunner: document.querySelector("#player-runner"),
   scoreFilter: document.querySelector("#score-filter"),
   goalText: document.querySelector("#goal-text"),
-  trainerGoal: document.querySelector("#trainer-goal"),
-  playerGoal: document.querySelector("#player-goal"),
   trainerUnit: document.querySelector("#trainer-unit"),
   playerUnit: document.querySelector("#player-unit"),
   setupDialog: document.querySelector("#setup-dialog"),
@@ -67,7 +63,6 @@ function init() {
   bindEvents();
 
   if (!getToken()) {
-    setStatus("Token mangler", "error");
     showSetupDialog();
     renderEmptyState();
     return;
@@ -78,7 +73,6 @@ function init() {
 
 function bindEvents() {
   if (els.form) els.form.addEventListener("submit", submitAction);
-  if (els.refresh) els.refresh.addEventListener("click", loadData);
   if (els.saveToken) els.saveToken.addEventListener("click", saveLocalToken);
   if (els.scoreFilter) {
     els.scoreFilter.addEventListener("change", () => {
@@ -95,7 +89,6 @@ async function loadData() {
   }
 
   setBusy(true);
-  setStatus("Henter data", "");
   clearMessage();
 
   try {
@@ -112,9 +105,7 @@ async function loadData() {
 
     populateParticipants();
     render();
-    setStatus("Opdateret", "ok");
   } catch (error) {
-    setStatus("Kunne ikke hente", "error");
     setMessage(error.message, "error");
   } finally {
     setBusy(false);
@@ -270,7 +261,7 @@ function calculateTotals() {
   state.actions.forEach((action) => {
     if (filter !== "all" && action.activity !== filter) return;
 
-    const multiplier = ACTIVITIES[action.activity]?.multiplier || 1;
+    const multiplier = filter === "all" ? ACTIVITIES[action.activity]?.leagueMultiplier || 1 : 1;
     const points = action.quantity * multiplier;
     const type = action.type === "Træner" || action.type === "Spiller" ? action.type : "";
 
@@ -314,8 +305,6 @@ function setScoreMeta(unit, goal) {
 
   els.trainerUnit.textContent = unit;
   els.playerUnit.textContent = unit;
-  els.trainerGoal.textContent = goalLabel;
-  els.playerGoal.textContent = goalLabel;
   els.goalText.textContent = goalText;
 }
 
@@ -381,17 +370,6 @@ function showSetupDialog() {
 
 function setBusy(isBusy) {
   if (els.submit) els.submit.disabled = isBusy;
-  if (els.refresh) {
-    els.refresh.disabled = isBusy;
-    els.refresh.classList.toggle("loading", isBusy);
-  }
-}
-
-function setStatus(text, mode) {
-  if (!els.sync) return;
-  els.sync.textContent = text;
-  els.sync.classList.toggle("ok", mode === "ok");
-  els.sync.classList.toggle("error", mode === "error");
 }
 
 function setMessage(text, mode) {
