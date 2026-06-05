@@ -136,7 +136,7 @@ function loadEmbeddedIntro() {
     const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
     els.introFrame.srcdoc = new TextDecoder("utf-8").decode(bytes);
   } catch (error) {
-    els.introFrame.srcdoc = "<!doctype html><html><body style=\"margin:0;background:#15a7ae\"></body></html>";
+    els.introFrame.srcdoc = "<!doctype html><html><body style=\"margin:0;background:transparent\"></body></html>";
     console.error("Intro kunne ikke indlæses:", error);
   }
 }
