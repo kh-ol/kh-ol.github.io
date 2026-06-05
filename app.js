@@ -56,15 +56,19 @@ const els = {
 };
 
 const storageTokenKey = "kh-sommer-ol-airtable-token";
+const introDurationMs = 4300;
+const introFadeMs = 420;
 
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
+  const introReady = playIntroOverlay();
+
   if (els.date) els.date.value = getTodayValue();
   bindEvents();
 
   if (!getToken()) {
-    showSetupDialog();
+    introReady.then(showSetupDialog);
     renderEmptyState();
     return;
   }
@@ -81,6 +85,36 @@ function bindEvents() {
       render();
     });
   }
+}
+
+function playIntroOverlay() {
+  const overlay = document.querySelector("#intro-overlay");
+  if (!overlay) return Promise.resolve();
+
+  const skip = document.querySelector("#intro-skip");
+  let done = false;
+  document.body.classList.add("intro-active");
+
+  return new Promise((resolve) => {
+    const hide = () => {
+      if (done) return;
+      done = true;
+      overlay.classList.add("is-exiting");
+      document.body.classList.remove("intro-active");
+      window.setTimeout(() => {
+        overlay.remove();
+        resolve();
+      }, introFadeMs);
+    };
+
+    const timer = window.setTimeout(hide, introDurationMs);
+    if (skip) {
+      skip.addEventListener("click", () => {
+        window.clearTimeout(timer);
+        hide();
+      });
+    }
+  });
 }
 
 async function loadData() {
