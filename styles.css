@@ -495,3 +495,14 @@ dialog::backdrop {
     gap: 0.5rem;
   }
 }
+
+#version-tag {
+  position: fixed;
+  bottom: 6px;
+  right: 10px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  user-select: none;
+  font-family: monospace;
+}
