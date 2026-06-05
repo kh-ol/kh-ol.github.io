@@ -183,12 +183,44 @@ main {
   background: #fff;
 }
 
-.team-path.trainer h3 {
+.team-path h3 {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.team-path h3 > span:first-child {
+  min-width: 0;
+}
+
+.team-path.trainer h3 > span:first-child {
   color: var(--trainer-dark);
 }
 
-.team-path.player h3 {
+.team-path.player h3 > span:first-child {
   color: var(--player-dark);
+}
+
+.team-score {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.2rem;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.team-score strong {
+  color: var(--team-color);
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .path {
@@ -248,58 +280,6 @@ main {
 
 .player {
   --team-color: var(--player);
-}
-
-.path-marker {
-  position: absolute;
-  left: 50%;
-  top: var(--marker-top, 4%);
-  z-index: 3;
-  display: grid;
-  gap: 0.38rem;
-  justify-items: center;
-  width: min(7rem, 90%);
-  transform: translate(-50%, -50%);
-  transition: top 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.marker-dot {
-  width: 2.65rem;
-  aspect-ratio: 1;
-  border: 0.35rem solid #fff;
-  border-radius: 50%;
-  background: var(--team-color);
-  box-shadow: 0 10px 18px rgba(22, 32, 42, 0.2);
-}
-
-.marker-label {
-  display: block;
-  max-width: 100%;
-  padding: 0.36rem 0.45rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  color: var(--ink);
-  font-size: 0.78rem;
-  font-weight: 850;
-  line-height: 1.15;
-  text-align: center;
-  overflow-wrap: anywhere;
-  background: #fff;
-}
-
-.path-marker[data-zone="bottom"] .marker-label {
-  order: -1;
-}
-
-.marker-label strong {
-  display: block;
-  color: var(--team-color);
-  font-size: 1.15rem;
-  line-height: 1;
-}
-
-.marker-label span {
-  display: block;
 }
 
 .form-section {

@@ -45,8 +45,6 @@ const els = {
   playerScore: document.querySelector("#player-score"),
   trainerProgress: document.querySelector("#trainer-progress"),
   playerProgress: document.querySelector("#player-progress"),
-  trainerRunner: document.querySelector("#trainer-runner"),
-  playerRunner: document.querySelector("#player-runner"),
   scoreFilter: document.querySelector("#score-filter"),
   trainerGoal: document.querySelector("#trainer-goal"),
   playerGoal: document.querySelector("#player-goal"),
@@ -286,8 +284,8 @@ function renderScores(totals) {
   animateNumber(els.trainerScore, trainer);
   animateNumber(els.playerScore, player);
   setScoreMeta(scoreMeta);
-  setPathProgress(els.trainerProgress, els.trainerRunner, trainerPct, trainer ? trainerPct : 0);
-  setPathProgress(els.playerProgress, els.playerRunner, playerPct, player ? playerPct : 0);
+  setPathProgress(els.trainerProgress, trainer ? trainerPct : 0);
+  setPathProgress(els.playerProgress, player ? playerPct : 0);
 
   if (state.lastLeader && state.lastLeader !== leader) {
     burstConfetti();
@@ -296,8 +294,8 @@ function renderScores(totals) {
 }
 
 function scoreToPathPercent(score, max) {
-  if (!score) return 14;
-  return Math.min(84, Math.max(8, Math.round((score / max) * 84)));
+  if (!score) return 0;
+  return Math.min(100, Math.max(0, Math.round((score / max) * 100)));
 }
 
 function getScoreMeta() {
@@ -314,11 +312,9 @@ function setScoreMeta({ unit, goal }) {
   els.playerGoal.textContent = goalLabel;
 }
 
-function setPathProgress(progressEl, markerEl, markerPercent, fillPercent) {
+function setPathProgress(progressEl, fillPercent) {
   const decimal = fillPercent / 100;
   progressEl.style.setProperty("--path-progress", decimal.toFixed(3));
-  markerEl.style.setProperty("--marker-top", `${markerPercent}%`);
-  markerEl.dataset.zone = markerPercent > 74 ? "bottom" : "middle";
 }
 
 function renderEmptyState() {
