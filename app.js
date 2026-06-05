@@ -45,6 +45,8 @@ const els = {
   playerScore: document.querySelector("#player-score"),
   trainerProgress: document.querySelector("#trainer-progress"),
   playerProgress: document.querySelector("#player-progress"),
+  trainerMarker: document.querySelector("#trainer-marker"),
+  playerMarker: document.querySelector("#player-marker"),
   scoreFilter: document.querySelector("#score-filter"),
   trainerGoal: document.querySelector("#trainer-goal"),
   playerGoal: document.querySelector("#player-goal"),
@@ -348,15 +350,15 @@ function renderScores(totals) {
   const player = totals.teams["Spiller"];
   const scoreMeta = getScoreMeta();
   const max = scoreMeta.goal || Math.max(trainer, player, 1);
-  const trainerPct = scoreToPathPercent(trainer, max);
-  const playerPct = scoreToPathPercent(player, max);
+  const trainerProgress = scoreToPathProgress(trainer, max);
+  const playerProgress = scoreToPathProgress(player, max);
   const leader = trainer === player ? "draw" : trainer > player ? "trainer" : "player";
 
   animateNumber(els.trainerScore, trainer);
   animateNumber(els.playerScore, player);
   setScoreMeta(scoreMeta);
-  setPathProgress(els.trainerProgress, trainer ? trainerPct : 0);
-  setPathProgress(els.playerProgress, player ? playerPct : 0);
+  setPathProgress(els.trainerProgress, els.trainerMarker, trainerProgress);
+  setPathProgress(els.playerProgress, els.playerMarker, playerProgress);
 
   if (state.lastLeader && state.lastLeader !== leader) {
     burstConfetti();
@@ -364,9 +366,9 @@ function renderScores(totals) {
   state.lastLeader = leader;
 }
 
-function scoreToPathPercent(score, max) {
+function scoreToPathProgress(score, max) {
   if (!score) return 0;
-  return Math.min(100, Math.max(0, Math.round((score / max) * 100)));
+  return Math.min(1, Math.max(0, score / max));
 }
 
 function getScoreMeta() {
@@ -383,9 +385,16 @@ function setScoreMeta({ unit, goal }) {
   els.playerGoal.textContent = goalLabel;
 }
 
-function setPathProgress(progressEl, fillPercent) {
-  const decimal = fillPercent / 100;
-  progressEl.style.setProperty("--path-progress", decimal.toFixed(3));
+function setPathProgress(progressEl, markerEl, progress) {
+  const decimal = Math.min(1, Math.max(0, progress));
+  progressEl.style.setProperty("--path-progress", decimal.toFixed(4));
+
+  if (!markerEl || typeof progressEl.getTotalLength !== "function") return;
+
+  const pathLength = progressEl.getTotalLength();
+  const point = progressEl.getPointAtLength(pathLength * decimal);
+  markerEl.style.setProperty("--path-marker-x", point.x.toFixed(2));
+  markerEl.style.setProperty("--path-marker-y", point.y.toFixed(2));
 }
 
 function renderEmptyState() {
