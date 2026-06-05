@@ -153,6 +153,7 @@ h3 {
 .intro-overlay.is-exiting {
   visibility: hidden;
   opacity: 0;
+  pointer-events: none;
 }
 
 .intro-frame {
