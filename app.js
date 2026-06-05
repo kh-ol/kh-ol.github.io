@@ -389,10 +389,17 @@ function setPathProgress(progressEl, markerEl, progress) {
   const decimal = Math.min(1, Math.max(0, progress));
   progressEl.style.setProperty("--path-progress", decimal.toFixed(4));
 
-  if (!markerEl || typeof progressEl.getTotalLength !== "function") return;
+  if (typeof progressEl.getTotalLength !== "function") return;
 
+  progressEl.removeAttribute("pathLength");
   const pathLength = progressEl.getTotalLength();
-  const point = progressEl.getPointAtLength(pathLength * decimal);
+  const coveredLength = pathLength * decimal;
+  progressEl.style.strokeDasharray = `${coveredLength} ${pathLength}`;
+  progressEl.style.strokeDashoffset = "0";
+
+  if (!markerEl) return;
+
+  const point = progressEl.getPointAtLength(coveredLength);
   markerEl.style.setProperty("--path-marker-x", point.x.toFixed(2));
   markerEl.style.setProperty("--path-marker-y", point.y.toFixed(2));
 }

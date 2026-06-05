@@ -9,7 +9,7 @@
   --trainer-dark: #9d2025;
   --player: #0e9c97;
   --player-dark: #086965;
-  --track: #c28a44;
+  --track: #d5dddf;
   --summer-teal: #15a7ae;
   --sun: #ffd24a;
   --orange: #f3791c;
@@ -348,9 +348,8 @@ main {
 
 .path-fill {
   stroke: var(--team-color);
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--path-progress, 0));
-  transition: stroke-dashoffset 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  stroke-dasharray: 0 999;
+  transition: stroke-dasharray 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .path-marker-layer {
