@@ -64,7 +64,7 @@ const els = {
 };
 
 const storageTokenKey = "kh-sommer-ol-airtable-token";
-const introDurationMs = 5000;
+const introDurationMs = 7000;
 const introFadeMs = 420;
 
 document.addEventListener("DOMContentLoaded", init);
