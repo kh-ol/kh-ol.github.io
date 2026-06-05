@@ -252,25 +252,34 @@ main {
   background: var(--ink);
 }
 
+.path-map {
+  position: absolute;
+  top: 1.2rem;
+  left: 50%;
+  width: 72%;
+  height: calc(100% - 2.4rem);
+  transform: translateX(-50%);
+  overflow: visible;
+}
+
 .path-line,
 .path-fill {
-  position: absolute;
-  left: 50%;
-  top: 1.2rem;
-  width: 0.62rem;
-  height: calc(100% - 2.4rem);
-  border-radius: 999px;
-  transform: translateX(-50%);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.62rem;
+  vector-effect: non-scaling-stroke;
 }
 
 .path-line {
-  background: var(--track);
+  stroke: var(--track);
 }
 
 .path-fill {
-  height: calc((100% - 2.4rem) * var(--path-progress, 0.04));
-  background: var(--team-color);
-  transition: height 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  stroke: var(--team-color);
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--path-progress, 0.04));
+  transition: stroke-dashoffset 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .trainer {
