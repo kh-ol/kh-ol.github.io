@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registrer aktivitet</title>
+    <link rel="preconnect" href="https://api.airtable.com">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="top-actions single-action">
+        <a class="secondary-link" href="index.html">Tilbage til stilling</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="form-section" aria-label="Registrering">
+        <form class="entry-panel" id="entry-form">
+          <div class="section-title">
+            <h1>Tilføj aktivitet</h1>
+            <div class="status-pill" id="sync-status" role="status">Klar</div>
+          </div>
+
+          <label>
+            <span>Hvem er du?</span>
+            <select id="member-input" required>
+              <option value="">Henter deltagere...</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Dato</span>
+            <input id="date-input" type="date" required>
+          </label>
+
+          <label>
+            <span>Aktivitet</span>
+            <select id="activity-input" required>
+              <option value="Løb">Løb</option>
+              <option value="Armbøjninger">Armbøjninger</option>
+              <option value="Mavebøjninger">Mavebøjninger</option>
+              <option value="Squats">Squats</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Antal</span>
+            <input id="quantity-input" type="number" min="1" step="1" inputmode="numeric" required>
+          </label>
+
+          <button class="primary-button" id="submit-button" type="submit">Send ind</button>
+          <p class="form-message" id="form-message"></p>
+        </form>
+      </section>
+    </main>
+
+    <dialog id="setup-dialog">
+      <form method="dialog" class="setup-panel">
+        <h2>Airtable token mangler</h2>
+        <p>Indsæt et Personal Access Token i <code>app.js</code>, eller gem et token lokalt i denne browser.</p>
+        <label>
+          <span>Token</span>
+          <input id="token-input" type="password" autocomplete="off" placeholder="pat...">
+        </label>
+        <div class="dialog-actions">
+          <button class="secondary-button" value="cancel" type="submit">Luk</button>
+          <button class="primary-button" id="save-token-button" value="default" type="button">Gem lokalt</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -18,15 +18,16 @@ const AIRTABLE = {
 };
 
 const ACTIVITIES = {
-  "Løb": { multiplier: 1 },
-  "Armbøjninger": { multiplier: 1 },
-  "Mavebøjninger": { multiplier: 1 },
-  "Squats": { multiplier: 1 }
+  "Løb": { multiplier: 1, goal: 200, unit: "km" },
+  "Armbøjninger": { multiplier: 1, goal: 5000, unit: "stk." },
+  "Mavebøjninger": { multiplier: 1, goal: 5000, unit: "stk." },
+  "Squats": { multiplier: 1, goal: 5000, unit: "stk." }
 };
 
 const state = {
   participants: [],
   actions: [],
+  scoreFilter: "all",
   lastLeader: null
 };
 
@@ -46,6 +47,12 @@ const els = {
   playerProgress: document.querySelector("#player-progress"),
   trainerRunner: document.querySelector("#trainer-runner"),
   playerRunner: document.querySelector("#player-runner"),
+  scoreFilter: document.querySelector("#score-filter"),
+  goalText: document.querySelector("#goal-text"),
+  trainerGoal: document.querySelector("#trainer-goal"),
+  playerGoal: document.querySelector("#player-goal"),
+  trainerUnit: document.querySelector("#trainer-unit"),
+  playerUnit: document.querySelector("#player-unit"),
   setupDialog: document.querySelector("#setup-dialog"),
   tokenInput: document.querySelector("#token-input"),
   saveToken: document.querySelector("#save-token-button")
@@ -56,7 +63,7 @@ const storageTokenKey = "kh-sommer-ol-airtable-token";
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
-  els.date.value = getTodayValue();
+  if (els.date) els.date.value = getTodayValue();
   bindEvents();
 
   if (!getToken()) {
@@ -70,9 +77,15 @@ function init() {
 }
 
 function bindEvents() {
-  els.form.addEventListener("submit", submitAction);
-  els.refresh.addEventListener("click", loadData);
-  els.saveToken.addEventListener("click", saveLocalToken);
+  if (els.form) els.form.addEventListener("submit", submitAction);
+  if (els.refresh) els.refresh.addEventListener("click", loadData);
+  if (els.saveToken) els.saveToken.addEventListener("click", saveLocalToken);
+  if (els.scoreFilter) {
+    els.scoreFilter.addEventListener("change", () => {
+      state.scoreFilter = els.scoreFilter.value;
+      render();
+    });
+  }
 }
 
 async function loadData() {
@@ -86,9 +99,10 @@ async function loadData() {
   clearMessage();
 
   try {
+    const shouldLoadActions = Boolean(els.trainerScore);
     const [participants, actions] = await Promise.all([
       listRecords(AIRTABLE.participantsTable),
-      listRecords(AIRTABLE.actionsTable)
+      shouldLoadActions ? listRecords(AIRTABLE.actionsTable) : Promise.resolve([])
     ]);
 
     state.participants = participants
@@ -133,8 +147,7 @@ async function submitAction(event) {
 
     els.quantity.value = "";
     setMessage("Point er registreret.", "ok");
-    burstConfetti();
-    await loadData();
+    window.location.href = "index.html";
   } catch (error) {
     setMessage(error.message, "error");
   } finally {
@@ -225,6 +238,8 @@ function normalizeAction(record) {
 }
 
 function populateParticipants() {
+  if (!els.member) return;
+
   const current = els.member.value;
   els.member.innerHTML = `<option value="">Vælg deltager</option>`;
 
@@ -241,16 +256,20 @@ function populateParticipants() {
 }
 
 function render() {
+  if (!els.trainerScore) return;
   const totals = calculateTotals();
   renderScores(totals);
 }
 
 function calculateTotals() {
+  const filter = state.scoreFilter;
   const totals = {
     teams: { "Træner": 0, "Spiller": 0 }
   };
 
   state.actions.forEach((action) => {
+    if (filter !== "all" && action.activity !== filter) return;
+
     const multiplier = ACTIVITIES[action.activity]?.multiplier || 1;
     const points = action.quantity * multiplier;
     const type = action.type === "Træner" || action.type === "Spiller" ? action.type : "";
@@ -264,15 +283,19 @@ function calculateTotals() {
 function renderScores(totals) {
   const trainer = totals.teams["Træner"];
   const player = totals.teams["Spiller"];
-  const max = Math.max(trainer, player, 1);
+  const activity = ACTIVITIES[state.scoreFilter];
+  const goal = activity?.goal || null;
+  const unit = activity?.unit || "point";
+  const max = goal || Math.max(trainer, player, 1);
   const trainerPct = scoreToPathPercent(trainer, max);
   const playerPct = scoreToPathPercent(player, max);
   const leader = trainer === player ? "draw" : trainer > player ? "trainer" : "player";
 
   animateNumber(els.trainerScore, trainer);
   animateNumber(els.playerScore, player);
-  setPathProgress(els.trainerProgress, els.trainerRunner, trainerPct);
-  setPathProgress(els.playerProgress, els.playerRunner, playerPct);
+  setScoreMeta(unit, goal);
+  setPathProgress(els.trainerProgress, els.trainerRunner, trainerPct, trainer ? trainerPct : 0);
+  setPathProgress(els.playerProgress, els.playerRunner, playerPct, player ? playerPct : 0);
 
   if (state.lastLeader && state.lastLeader !== leader) {
     burstConfetti();
@@ -281,19 +304,30 @@ function renderScores(totals) {
 }
 
 function scoreToPathPercent(score, max) {
-  if (!score) return 4;
+  if (!score) return 14;
   return Math.min(84, Math.max(8, Math.round((score / max) * 84)));
 }
 
-function setPathProgress(progressEl, markerEl, percent) {
-  const decimal = percent / 100;
+function setScoreMeta(unit, goal) {
+  const goalLabel = goal ? `${formatNumber(goal)} ${unit}` : "Mål";
+  const goalText = goal ? `Mål: ${goalLabel}` : "Mål: samlet stilling";
+
+  els.trainerUnit.textContent = unit;
+  els.playerUnit.textContent = unit;
+  els.trainerGoal.textContent = goalLabel;
+  els.playerGoal.textContent = goalLabel;
+  els.goalText.textContent = goalText;
+}
+
+function setPathProgress(progressEl, markerEl, markerPercent, fillPercent) {
+  const decimal = fillPercent / 100;
   progressEl.style.setProperty("--path-progress", decimal.toFixed(3));
-  markerEl.style.setProperty("--marker-top", `${percent}%`);
-  markerEl.dataset.zone = percent > 74 ? "bottom" : "middle";
+  markerEl.style.setProperty("--marker-top", `${markerPercent}%`);
+  markerEl.dataset.zone = markerPercent > 74 ? "bottom" : "middle";
 }
 
 function renderEmptyState() {
-  els.member.innerHTML = `<option value="">Token mangler</option>`;
+  if (els.member) els.member.innerHTML = `<option value="">Token mangler</option>`;
   render();
 }
 
@@ -340,24 +374,28 @@ function saveLocalToken() {
 }
 
 function showSetupDialog() {
-  if (typeof els.setupDialog.showModal === "function" && !els.setupDialog.open) {
+  if (els.setupDialog && typeof els.setupDialog.showModal === "function" && !els.setupDialog.open) {
     els.setupDialog.showModal();
   }
 }
 
 function setBusy(isBusy) {
-  els.submit.disabled = isBusy;
-  els.refresh.disabled = isBusy;
-  els.refresh.classList.toggle("loading", isBusy);
+  if (els.submit) els.submit.disabled = isBusy;
+  if (els.refresh) {
+    els.refresh.disabled = isBusy;
+    els.refresh.classList.toggle("loading", isBusy);
+  }
 }
 
 function setStatus(text, mode) {
+  if (!els.sync) return;
   els.sync.textContent = text;
   els.sync.classList.toggle("ok", mode === "ok");
   els.sync.classList.toggle("error", mode === "error");
 }
 
 function setMessage(text, mode) {
+  if (!els.message) return;
   els.message.textContent = text;
   els.message.className = `form-message ${mode || ""}`.trim();
 }

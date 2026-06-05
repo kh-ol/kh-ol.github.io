@@ -9,12 +9,8 @@
   </head>
   <body>
     <header class="topbar">
-      <div class="brand">
-        <p class="eyebrow">KH Sommer OL</p>
-        <h1>Trænere mod spillere</h1>
-      </div>
       <div class="top-actions">
-        <a class="primary-link" href="#registrering">Registrer aktivitet</a>
+        <a class="primary-link" href="register.html">Registrer aktivitet</a>
         <button class="icon-button" id="refresh-button" type="button" aria-label="Opdater resultater" title="Opdater resultater">
           <span aria-hidden="true">↻</span>
         </button>
@@ -22,14 +18,22 @@
     </header>
 
     <main>
-      <section class="scoreboard" aria-labelledby="score-title">
-        <div class="score-head">
-          <div>
-            <p class="eyebrow">Live stilling</p>
-            <h2 id="score-title">Hvor langt er holdene?</h2>
-          </div>
+      <section class="scoreboard" aria-label="Konkurrencestilling">
+        <div class="score-controls">
+          <label class="compact-field">
+            <span>Vis</span>
+            <select id="score-filter">
+              <option value="all">Samlet konkurrence</option>
+              <option value="Løb">Løb</option>
+              <option value="Armbøjninger">Armbøjninger</option>
+              <option value="Mavebøjninger">Mavebøjninger</option>
+              <option value="Squats">Squats</option>
+            </select>
+          </label>
           <div class="status-pill" id="sync-status" role="status">Klar</div>
         </div>
+
+        <p class="goal-text" id="goal-text">Mål: samlet stilling</p>
 
         <div class="paths" aria-label="Holdenes placering på ruten">
           <article class="team-path trainer">
@@ -37,9 +41,10 @@
             <div class="path" aria-label="Trænernes rute">
               <div class="path-line"></div>
               <div class="path-fill" id="trainer-progress"></div>
+              <div class="goal-badge" id="trainer-goal">Mål</div>
               <div class="path-marker" id="trainer-runner">
                 <span class="marker-dot" aria-hidden="true"></span>
-                <span class="marker-label"><strong id="trainer-score">0</strong> point</span>
+                <span class="marker-label"><strong id="trainer-score">0</strong><span id="trainer-unit">point</span></span>
               </div>
             </div>
           </article>
@@ -49,52 +54,14 @@
             <div class="path" aria-label="Spillernes rute">
               <div class="path-line"></div>
               <div class="path-fill" id="player-progress"></div>
+              <div class="goal-badge" id="player-goal">Mål</div>
               <div class="path-marker" id="player-runner">
                 <span class="marker-dot" aria-hidden="true"></span>
-                <span class="marker-label"><strong id="player-score">0</strong> point</span>
+                <span class="marker-label"><strong id="player-score">0</strong><span id="player-unit">point</span></span>
               </div>
             </div>
           </article>
         </div>
-      </section>
-
-      <section class="form-section" id="registrering" aria-labelledby="form-title">
-        <form class="entry-panel" id="entry-form">
-          <div class="section-title">
-            <p class="eyebrow">Registrering</p>
-            <h2 id="form-title">Tilføj din aktivitet</h2>
-          </div>
-
-          <label>
-            <span>Hvem er du?</span>
-            <select id="member-input" required>
-              <option value="">Henter deltagere...</option>
-            </select>
-          </label>
-
-          <label>
-            <span>Dato</span>
-            <input id="date-input" type="date" required>
-          </label>
-
-          <label>
-            <span>Aktivitet</span>
-            <select id="activity-input" required>
-              <option value="Løb">Løb</option>
-              <option value="Armbøjninger">Armbøjninger</option>
-              <option value="Mavebøjninger">Mavebøjninger</option>
-              <option value="Squats">Squats</option>
-            </select>
-          </label>
-
-          <label>
-            <span>Antal gange</span>
-            <input id="quantity-input" type="number" min="1" step="1" inputmode="numeric" required>
-          </label>
-
-          <button class="primary-button" id="submit-button" type="submit">Send ind</button>
-          <p class="form-message" id="form-message"></p>
-        </form>
       </section>
     </main>
 

@@ -54,10 +54,6 @@ button {
   padding: 0.9rem 0 0.75rem;
 }
 
-.brand {
-  min-width: 0;
-}
-
 .eyebrow {
   margin: 0 0 0.25rem;
   color: var(--muted);
@@ -96,7 +92,12 @@ h3 {
   align-items: stretch;
 }
 
+.top-actions.single-action {
+  grid-template-columns: 1fr;
+}
+
 .primary-link,
+.secondary-link,
 .primary-button,
 .secondary-button,
 .icon-button {
@@ -115,6 +116,19 @@ h3 {
   text-align: center;
   text-decoration: none;
   background: var(--ink);
+}
+
+.secondary-link {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: #fff;
 }
 
 .icon-button {
@@ -151,10 +165,26 @@ main {
   padding: 0.85rem;
 }
 
-.score-head,
+.score-controls,
 .section-title {
   display: grid;
   gap: 0.75rem;
+}
+
+.score-controls {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.compact-field {
+  margin-top: 0;
+}
+
+.goal-text {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 850;
 }
 
 .status-pill {
@@ -220,33 +250,22 @@ main {
     repeating-linear-gradient(180deg, transparent 0 4.6rem, rgba(23, 32, 42, 0.07) 4.6rem 4.68rem);
 }
 
-.path::before,
-.path::after {
+.goal-badge {
   position: absolute;
   left: 50%;
+  bottom: 0.55rem;
   z-index: 2;
-  width: 2rem;
-  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  color: #fff;
   transform: translateX(-50%);
   font-size: 0.72rem;
   font-weight: 950;
-}
-
-.path::before {
-  top: 0.55rem;
-  color: var(--muted);
-  content: "0";
-  background: #fff;
-  border: 1px solid var(--line);
-}
-
-.path::after {
-  bottom: 0.55rem;
-  color: #fff;
-  content: "Mål";
+  white-space: nowrap;
   background: var(--ink);
 }
 
@@ -325,6 +344,10 @@ main {
   color: var(--team-color);
   font-size: 1.15rem;
   line-height: 1;
+}
+
+.marker-label span {
+  display: block;
 }
 
 .form-section {
@@ -435,12 +458,6 @@ dialog::backdrop {
 }
 
 @media (min-width: 700px) {
-  .topbar {
-    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-    align-items: end;
-  }
-
-  .score-head,
   .section-title {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: start;
